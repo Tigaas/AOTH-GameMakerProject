@@ -30,7 +30,7 @@
   ],
   "name":"spr_player_andando",
   "nineSlice":null,
-  "origin":7,
+  "origin":9,
   "parent":{
     "name":"Player",
     "path":"folders/Sprites/Player.yy",
@@ -105,7 +105,7 @@
     ],
     "visibleRange":null,
     "volume":1.0,
-    "xorigin":17,
+    "xorigin":15,
     "yorigin":32,
   },
   "swatchColours":null,

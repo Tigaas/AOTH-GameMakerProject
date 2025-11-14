@@ -21,7 +21,7 @@ image_yscale = scale;
 // ---- DASH / ROLL ----
 is_dashing = false;      // indica se está rolando
 dash_speed = 3;          // velocidade do roll
-dash_duration = 20;      // tempo em frames (15 = 0.25s se 60fps)
+dash_duration = 25;      // tempo em frames (15 = 0.25s se 60fps)
 dash_timer = 0;          // contador
 
 
@@ -30,3 +30,23 @@ dash_dir_x = 0;
 dash_dir_y = 0;
 
 facing = "right"; // controla cima/baixo/esquerda/direita
+
+
+// ------ STAMINA ------
+stamina_max = 100;
+stamina = stamina_max;
+
+stamina_regen = 0.5;      // regen por frame
+stamina_run_cost = 0.25;  // custo por frame correndo
+stamina_roll_cost = 20;   // custo do roll
+
+stamina_delay = 40;       // delay antes de regenerar
+stamina_delay_timer = 0;  // timer do delay
+
+// --- ATAQUE ---
+is_attacking = false;
+attack_time = 20;     // duração total da animação (em frames) = ~0.33s
+attack_timer = 0;
+
+attack_stamina_cost = 20;   // custo de stamina para atacar
+
