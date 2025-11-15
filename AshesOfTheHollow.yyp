@@ -38,7 +38,7 @@
   },
   "name":"AshesOfTheHollow",
   "resources":[
-    {"id":{"name":"obj_control","path":"objects/obj_control/obj_control.yy",},},
+    {"id":{"name":"obj_enemy","path":"objects/obj_enemy/obj_enemy.yy",},},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"id":{"name":"spr_enemy_andando_baixo","path":"sprites/spr_enemy_andando_baixo/spr_enemy_andando_baixo.yy",},},
@@ -49,7 +49,6 @@
     {"id":{"name":"spr_enemy_atacando","path":"sprites/spr_enemy_atacando/spr_enemy_atacando.yy",},},
     {"id":{"name":"spr_enemy_baixo","path":"sprites/spr_enemy_baixo/spr_enemy_baixo.yy",},},
     {"id":{"name":"spr_enemy_cima","path":"sprites/spr_enemy_cima/spr_enemy_cima.yy",},},
-    {"id":{"name":"spr_enemy_roll","path":"sprites/spr_enemy_roll/spr_enemy_roll.yy",},},
     {"id":{"name":"spr_enemy","path":"sprites/spr_enemy/spr_enemy.yy",},},
     {"id":{"name":"spr_player_andando_baixo","path":"sprites/spr_player_andando_baixo/spr_player_andando_baixo.yy",},},
     {"id":{"name":"spr_player_andando_cima","path":"sprites/spr_player_andando_cima/spr_player_andando_cima.yy",},},
