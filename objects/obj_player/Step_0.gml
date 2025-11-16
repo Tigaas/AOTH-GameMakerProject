@@ -257,6 +257,14 @@ if (!is_dashing && !is_attacking && stamina >= attack_stamina_cost)
         // salva direção do ataque
         attack_facing = facing;
 
+        // ====================================
+        // CRIA HITBOX DO ATAQUE
+        // ====================================
+        var hb = instance_create_layer(x, y, "Instances", obj_hitbox_player_attack);
+        hb.attack_dir = attack_facing;
+        hb.owner = id;
+
+
         switch (attack_facing)
         {
             case "up":
@@ -309,4 +317,5 @@ if (is_attacking)
             case "down":  sprite_index = spr_player_baixo; break;
         }
     }
+	
 }

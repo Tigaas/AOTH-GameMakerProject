@@ -1,10 +1,10 @@
 {
   "$GMSprite":"v2",
   "%Name":"spr_enemy_andando",
-  "bboxMode":0,
+  "bboxMode":2,
   "bbox_bottom":29,
   "bbox_left":0,
-  "bbox_right":33,
+  "bbox_right":20,
   "bbox_top":0,
   "collisionKind":1,
   "collisionTolerance":0,

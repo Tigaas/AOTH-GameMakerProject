@@ -38,7 +38,7 @@ stamina = stamina_max;
 
 stamina_regen = 0.5;      // regen por frame
 stamina_run_cost = 0.25;  // custo por frame correndo
-stamina_roll_cost = 20;   // custo do roll
+stamina_roll_cost = 12;   // custo do roll
 
 stamina_delay = 40;       // delay antes de regenerar
 stamina_delay_timer = 0;  // timer do delay
@@ -48,5 +48,5 @@ is_attacking = false;
 attack_time = 20;     // duração total da animação (em frames) = ~0.33s
 attack_timer = 0;
 
-attack_stamina_cost = 20;   // custo de stamina para atacar
+attack_stamina_cost = 15;   // custo de stamina para atacar
 
