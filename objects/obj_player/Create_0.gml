@@ -6,6 +6,9 @@ move_speed = 1;
 hsp = 0;
 vsp = 0;
 
+//colisao
+collision_enabled = true;
+
 // Guarda o último lado que ele estava olhando
 last_dir = 1; // 1 = direita, -1 = esquerda
 
@@ -20,9 +23,10 @@ image_yscale = scale;
 
 // ---- DASH / ROLL ----
 is_dashing = false;      // indica se está rolando
-dash_speed = 3;          // velocidade do roll
+dash_speed = 2;          // velocidade do roll
 dash_duration = 25;      // tempo em frames (15 = 0.25s se 60fps)
 dash_timer = 0;          // contador
+
 
 
 // direção do dash (precisa existir pra não dar erro)
