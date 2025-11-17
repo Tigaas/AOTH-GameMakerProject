@@ -6,3 +6,6 @@ hp_max = 10;
 
 show_hpbar = false;   // só aparece depois do primeiro hit
 hpbar_offset = -20;   // posição acima da cabeça
+
+image_xscale = 0.5;
+image_yscale = 0.5;

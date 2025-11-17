@@ -50,3 +50,6 @@ attack_timer = 0;
 
 attack_stamina_cost = 15;   // custo de stamina para atacar
 
+//------VIDA-----
+hp = 100;
+hp_max = 100;
