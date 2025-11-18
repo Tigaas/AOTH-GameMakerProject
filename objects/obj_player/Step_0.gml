@@ -3,9 +3,35 @@
 // =========================================================
 if (is_dashing)
 {
-    x += dash_dir_x * dash_speed;
-    y += dash_dir_y * dash_speed;
+    // DASH COM COLISÃO — NÃO ATRAVESSA PAREDE
+    var steps = dash_speed;
+    var step_x = dash_dir_x;
+    var step_y = dash_dir_y;
 
+    // Se dash_dir for zero (por segurança), usa last_dir na horizontal
+    if (step_x == 0 && step_y == 0)
+    {
+        step_x = last_dir;
+    }
+
+    repeat (steps)
+    {
+        // mover horizontal
+        x += step_x;
+        if (place_meeting(x, y, obj_solid))
+        {
+            x -= step_x; 
+        }
+
+        // mover vertical
+        y += step_y;
+        if (place_meeting(x, y, obj_solid))
+        {
+            y -= step_y; 
+        }
+    }
+
+    // animação do roll
     sprite_index = spr_player_roll;
     image_speed = 1;
     image_xscale = last_dir * scale;
@@ -27,7 +53,50 @@ if (is_dashing)
         }
     }
 
-    exit; 
+    // após o dash, pro caso de acabar em cima do sólido, passa pela correção abaixo
+    // (não damos exit aqui pra que a correção "anti-stuck" rode)
+}
+
+
+// ==========================================
+//  EMPURRAR PLAYER PARA FORA DA PAREDE (FORTE)
+// ==========================================
+var safety = 8; // máximo de pixels a corrigir (pode aumentar se quiser)
+
+if (place_meeting(x, y, obj_solid))
+{
+    // tenta empurrar em todas as direções com prioridade horizontal/vertical
+    var pushed = false;
+
+    for (var i = 0; i < safety && !pushed; i++)
+    {
+        // tenta direita
+        if (!place_meeting(x + 1, y, obj_solid)) { x += 1; pushed = true; break; }
+        // tenta esquerda
+        if (!place_meeting(x - 1, y, obj_solid)) { x -= 1; pushed = true; break; }
+        // tenta baixo
+        if (!place_meeting(x, y + 1, obj_solid)) { y += 1; pushed = true; break; }
+        // tenta cima
+        if (!place_meeting(x, y - 1, obj_solid)) { y -= 1; pushed = true; break; }
+
+        // se nenhuma direc. liberou 1 px, tenta expandir (2 px, 3 px, ...)
+        for (var j = 2; j <= i+1 && !pushed; j++)
+        {
+            if (!place_meeting(x + j, y, obj_solid)) { x += j; pushed = true; break; }
+            if (!place_meeting(x - j, y, obj_solid)) { x -= j; pushed = true; break; }
+            if (!place_meeting(x, y + j, obj_solid)) { y += j; pushed = true; break; }
+            if (!place_meeting(x, y - j, obj_solid)) { y -= j; pushed = true; break; }
+        }
+    }
+
+    // se ainda preso após safety, tenta empurrar de forma direcional baseada em facing/last_dir
+    if (place_meeting(x, y, obj_solid))
+    {
+        // força um push baseado no last_dir (horizontal) ou facing vertical
+        if (last_dir != 0 && !place_meeting(x + last_dir, y, obj_solid)) x += last_dir;
+        else if (facing == "up" && !place_meeting(x, y - 1, obj_solid)) y -= 1;
+        else if (facing == "down" && !place_meeting(x, y + 1, obj_solid)) y += 1;
+    }
 }
 
 
@@ -56,7 +125,7 @@ if (!is_attacking && !is_dashing)
         move_y /= len;
     }
 
-    // DASH
+    // DASH (início)
     if (keyboard_check_pressed(vk_space) && stamina >= stamina_roll_cost)
     {
         stamina_spend(stamina_roll_cost);
@@ -85,11 +154,14 @@ if (!is_attacking && !is_dashing)
         if (dash_dir_x > 0) last_dir = 1;
 
         image_xscale = (dash_dir_x != 0 ? scale * last_dir : scale);
+
+        exit;
     }
 
-    // MOVIMENTO
-    x += move_x * move_speed;
-    y += move_y * move_speed;
+
+    // MOVIMENTO (somente registra, colisão aplica depois)
+    h = move_x * move_speed;
+    v = move_y * move_speed;
 
     // FACING
     if (move_x != 0 || move_y != 0)
@@ -141,38 +213,11 @@ if (!is_attacking && !is_dashing)
     {
         move_speed = 2;
         stamina_spend(stamina_run_cost);
+
+        h = move_x * move_speed;
+        v = move_y * move_speed;
     }
     else move_speed = 1;
-}
-
-
-
-// =========================================================
-// ================= EXECUÇÃO do DASH ======================
-// =========================================================
-if (is_dashing)
-{
-    x += dash_dir_x * dash_speed;
-    y += dash_dir_y * dash_speed;
-
-    dash_timer--;
-
-    if (dash_timer <= 0)
-    {
-        is_dashing = false;
-        image_speed = 0;
-        image_index = 0;
-
-        switch (facing)
-        {
-            case "right":
-            case "left": sprite_index = spr_player; break;
-            case "up":    sprite_index = spr_player_cima; break;
-            case "down":  sprite_index = spr_player_baixo; break;
-        }
-    }
-
-    exit;
 }
 
 
@@ -204,7 +249,6 @@ if (!is_dashing && !is_attacking && stamina >= attack_stamina_cost)
 
         attack_facing = facing;
 
-        // HITBOX DO ATAQUE
         var hb = instance_create_layer(x, y, "Instances", obj_hitbox_player_attack);
         hb.attack_dir = attack_facing;
         hb.owner = id;
@@ -224,14 +268,14 @@ if (!is_dashing && !is_attacking && stamina >= attack_stamina_cost)
 
 
 // =========================================================
-// ================ LÓGICA DO ATAQUE =======================
+// ================= LÓGICA DO ATAQUE ======================
 // =========================================================
 if (is_attacking)
 {
     attack_timer--;
 
-    move_x = 0;
-    move_y = 0;
+    h = 0;
+    v = 0;
 
     if (attack_timer <= 0)
     {
@@ -254,81 +298,57 @@ if (is_attacking)
 // ====================== COLISÃO FINAL ====================
 // =========================================================
 
-// ----------- COLISÃO COM OBJETOS SÓLIDOS (paredes etc.) ----------
+// ======= COLISÃO COM OBJ_SÓLIDO (normal, não dash) =======
 if (!is_dashing)
 {
-    // salvamos movimento
-    var old_x = x;
-    var old_y = y;
+    // horizontal
+    x += h;
 
-    // tenta mover na horizontal
-    x = old_x;
-    if (instance_place(x, old_y, obj_solid) != noone)
+    if (place_meeting(x, y, obj_solid))
     {
-        // empurra para trás até sair
+        // calcula direção de saída (fallback para last_dir se h == 0)
+        var sx = sign(h);
+        if (sx == 0) sx = last_dir != 0 ? last_dir : 1;
+
         var safe = 0;
-        while (instance_place(x, old_y, obj_solid) != noone && safe < 20)
+        while (place_meeting(x, y, obj_solid) && safe < 32)
         {
-            x -= sign(move_x);
+            x -= sx;
             safe++;
         }
+        h = 0;
     }
 
-    // tenta mover na vertical
-    y = old_y;
-    if (instance_place(old_x, y, obj_solid) != noone)
+    // vertical
+    y += v;
+
+    if (place_meeting(x, y, obj_solid))
     {
+        var sy = sign(v);
+        if (sy == 0) sy = (facing == "up") ? -1 : (facing == "down" ? 1 : 1);
+
         var safe2 = 0;
-        while (instance_place(old_x, y, obj_solid) != noone && safe2 < 20)
+        while (place_meeting(x, y, obj_solid) && safe2 < 32)
         {
-            y -= sign(move_y);
+            y -= sy;
             safe2++;
         }
+        v = 0;
     }
 }
 
 
-// ----------- COLISÃO COM INIMIGOS (FORA DO DASH) ----------
+
+// ======= COLISÃO COM INIMIGO (empurrar) =======
 if (!is_dashing)
 {
     var e = instance_place(x, y, obj_enemy);
 
     if (e != noone)
     {
-        var safety = 0;
+        var ang = point_direction(e.x, e.y, x, y);
 
-        // empurra o player para fora do inimigo
-        while (instance_place(x, y, obj_enemy) != noone && safety < 20)
-        {
-            // empurra para longe do inimigo
-            var ang = point_direction(e.x, e.y, x, y);
-            x += lengthdir_x(1, ang);
-            y += lengthdir_y(1, ang);
-
-            safety++;
-        }
-    }
-}
-
-
-// ----------- SE O DASH ACABAR E VOCÊ FICAR DENTRO DO INIMIGO ----------
-if (!is_dashing && !is_attacking)
-{
-    var inside = instance_place(x, y, obj_enemy);
-
-    if (inside != noone)
-    {
-        var safety3 = 0;
-
-        while (instance_place(x, y, obj_enemy) != noone && safety3 < 30)
-        {
-            // empurra para trás conforme a direção do dash anterior
-            var ang2 = point_direction(inside.x, inside.y, x, y);
-
-            x += lengthdir_x(1.5, ang2);
-            y += lengthdir_y(1.5, ang2);
-
-            safety3++;
-        }
+        x += lengthdir_x(4, ang);
+        y += lengthdir_y(4, ang);
     }
 }
