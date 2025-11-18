@@ -1,12 +1,13 @@
-
-
+// =========================================================
+// ========================= MOVIMENTO =====================
+// =========================================================
 move_speed = 1;
 
 // Direções de movimento
 hsp = 0;
 vsp = 0;
 
-//colisao
+// Colisão
 collision_enabled = true;
 
 // Guarda o último lado que ele estava olhando
@@ -20,23 +21,25 @@ scale = 0.5;
 image_xscale = scale;
 image_yscale = scale;
 
+// =========================================================
+// ========================= DASH ===========================
+// =========================================================
+is_dashing = false;
+dash_blocked = false;
 
-// ---- DASH / ROLL ----
-is_dashing = false;      // indica se está rolando
-dash_speed = 2;          // velocidade do roll
-dash_duration = 25;      // tempo em frames (15 = 0.25s se 60fps)
-dash_timer = 0;          // contador
+dash_timer = 0;         
+dash_duration = 15;     // <-- TEMPO DO ROLL
+dash_speed = 4;         // <-- VELOCIDADE DO ROLL (IMPORTANTE!!)
 
-
-
-// direção do dash (precisa existir pra não dar erro)
 dash_dir_x = 0;
 dash_dir_y = 0;
 
-facing = "right"; // controla cima/baixo/esquerda/direita
+// Direção para cima/baixo/esquerda/direita
+facing = "right";
 
-
-// ------ STAMINA ------
+// =========================================================
+// ======================== STAMINA =========================
+// =========================================================
 stamina_max = 100;
 stamina = stamina_max;
 
@@ -47,13 +50,17 @@ stamina_roll_cost = 12;   // custo do roll
 stamina_delay = 40;       // delay antes de regenerar
 stamina_delay_timer = 0;  // timer do delay
 
-// --- ATAQUE ---
+// =========================================================
+// ======================== ATAQUE ==========================
+// =========================================================
 is_attacking = false;
-attack_time = 20;     // duração total da animação (em frames) = ~0.33s
+attack_time = 20;     // duração total da animação (em frames)
 attack_timer = 0;
 
 attack_stamina_cost = 15;   // custo de stamina para atacar
 
-//------VIDA-----
+// =========================================================
+// ========================= VIDA ===========================
+// =========================================================
 hp = 100;
 hp_max = 100;
