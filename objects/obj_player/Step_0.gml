@@ -219,19 +219,70 @@ if (mouse_check_button_pressed(mb_left))
     attack_timer = attack_time;
     stamina_spend(attack_stamina_cost);
 
-    attack_facing = facing;
+    // ===============================================
+// HABILITAR ATAQUE EM 8 DIREÇÕES
+// ===============================================
 
-    var hb = instance_create_layer(x, y, "Instances", obj_hitbox_player_attack);
-    hb.attack_dir = attack_facing;
-    hb.owner      = id;
+// Coleta a direção REAL (input analógico digital)
+var mx = keyboard_check(ord("D")) - keyboard_check(ord("A"));
+var my = keyboard_check(ord("S")) - keyboard_check(ord("W"));
 
-    switch (attack_facing)
-    {
-        case "up":    sprite_index = spr_player_atacando_cima;  break;
-        case "down":  sprite_index = spr_player_atacando_baixo; break;
-        case "right": sprite_index = spr_player_atacando; image_xscale = scale;  break;
-        case "left":  sprite_index = spr_player_atacando; image_xscale = -scale; break;
+// Se parado → usar facing normal
+if (mx == 0 && my == 0)
+{
+    switch (facing) {
+        case "right": mx = 1; break;
+        case "left":  mx = -1; break;
+        case "down":  my = 1; break;
+        case "up":    my = -1; break;
     }
+}
+
+// Normaliza
+var l = point_distance(0,0,mx,my);
+if (l != 0) {
+    mx /= l; 
+    my /= l;
+}
+
+// Detecta direção entre 8 possíveis
+if (mx > 0.5 && abs(my) < 0.4) attack_facing = "right";
+else if (mx < -0.5 && abs(my) < 0.4) attack_facing = "left";
+else if (my > 0.5 && abs(mx) < 0.4) attack_facing = "down";
+else if (my < -0.5 && abs(mx) < 0.4) attack_facing = "up";
+else if (mx > 0.4 && my < -0.4) attack_facing = "up_right";
+else if (mx < -0.4 && my < -0.4) attack_facing = "up_left";
+else if (mx > 0.4 && my > 0.4) attack_facing = "down_right";
+else if (mx < -0.4 && my > 0.4) attack_facing = "down_left";
+
+// Criar hitbox
+var hb = instance_create_layer(x, y, "Instances", obj_hitbox_player_attack);
+hb.attack_dir = attack_facing;
+hb.owner      = id;
+
+// Animação (por enquanto usa as 4 normais)
+switch (attack_facing)
+{
+    case "up":    sprite_index = spr_player_atacando_cima;  break;
+    case "down":  sprite_index = spr_player_atacando_baixo; break;
+
+    case "right": 
+    case "up_right":
+    case "down_right":
+        sprite_index = spr_player_atacando; 
+        image_xscale = scale;  
+    break;
+
+    case "left":  
+    case "up_left":
+    case "down_left":
+        sprite_index = spr_player_atacando; 
+        image_xscale = -scale;  
+    break;
+}
+
+image_speed = 1;
+
 
     image_speed = 1;
 }
