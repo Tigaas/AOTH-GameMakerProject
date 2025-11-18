@@ -28,8 +28,8 @@ is_dashing = false;
 dash_blocked = false;
 
 dash_timer = 0;         
-dash_duration = 15;     // <-- TEMPO DO ROLL
-dash_speed = 4;         // <-- VELOCIDADE DO ROLL (IMPORTANTE!!)
+dash_duration = 20;     // <-- TEMPO DO ROLL
+dash_speed = 2;         // <-- VELOCIDADE DO ROLL (IMPORTANTE!!)
 
 dash_dir_x = 0;
 dash_dir_y = 0;

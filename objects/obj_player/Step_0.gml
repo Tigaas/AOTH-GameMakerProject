@@ -1,157 +1,126 @@
 // =========================================================
-// STEP EVENT - OBJ_PLAYER (VERSÃO A2: souls-modern -> desliza)
+// STEP EVENT - OBJ_PLAYER (OTIMIZADO, MESMA LÓGICA)
 // =========================================================
 
-// -------------------------
-// Função local (coloque aqui para garantir ordem)
-// -------------------------
+
+// =========================================================
+// FUNÇÃO LOCAL — GASTA STAMINA
+// =========================================================
 function stamina_spend(amount) {
     stamina = max(0, stamina - amount);
     stamina_delay_timer = stamina_delay;
 }
 
+
 // =========================================================
-// 1) INÍCIO DO DASH (PRIORIDADE MÁXIMA)
-// - Garante que o dash comece no mesmo frame em que o jogador apertou
+// 1) INÍCIO DO DASH
 // =========================================================
 if (!is_dashing && !is_attacking && keyboard_check_pressed(vk_space) && stamina >= stamina_roll_cost)
 {
-    // gasta stamina imediatamente
     stamina_spend(stamina_roll_cost);
 
-    is_dashing = true;
-    dash_timer = dash_duration;
+    is_dashing   = true;
+    dash_timer   = dash_duration;
     dash_blocked = false;
 
-    // captura input atual
+    // input bruto
     var mx = keyboard_check(ord("D")) - keyboard_check(ord("A"));
     var my = keyboard_check(ord("S")) - keyboard_check(ord("W"));
 
-    // se parado, usa facing/last_dir
+    // se parado → usa facing
     if (mx == 0 && my == 0)
     {
-        switch (facing)
-        {
-            case "right": mx = 1; break;
+        switch (facing) {
+            case "right": mx =  1; break;
             case "left":  mx = -1; break;
             case "up":    my = -1; break;
-            case "down":  my = 1; break;
-            default: mx = last_dir; my = 0;
+            case "down":  my =  1; break;
+            default:      mx = last_dir;
         }
     }
 
-    // normaliza vetor e guarda direção imutável do dash
-    var mlen = point_distance(0,0,mx,my);
-    if (mlen != 0)
-    {
-        dash_dir_x = mx / mlen;
-        dash_dir_y = my / mlen;
-    }
-    else
-    {
+    // normaliza
+    var len = point_distance(0,0,mx,my);
+    if (len != 0) {
+        dash_dir_x = mx / len;
+        dash_dir_y = my / len;
+    } else {
         dash_dir_x = last_dir;
         dash_dir_y = 0;
     }
 
-    // atualiza last_dir pra espelhar sprite corretamente
     if (dash_dir_x != 0) last_dir = sign(dash_dir_x);
 
-    // força animação do roll pra iniciar imediatamente
+    // animação do roll
     sprite_index = spr_player_roll;
-    image_speed = 1;
+    image_speed  = 1;
     image_xscale = last_dir * scale;
 }
 
+
 // =========================================================
-// 2) EXECUÇÃO DO DASH (PRIORIDADE: impede o resto do Step)
-// - Implementa A2: tenta avançar nas duas componentes; se bate numa
-//   componente, tenta continuar pela componente livre (slide).
+// 2) EXECUÇÃO DO DASH (A2 — sem clipping)
 // =========================================================
 if (is_dashing)
 {
-    // dx/dy = 0 se dash_blocked (totalmente travado); caso contrário usamos dash_dir unitário
     var dx = dash_blocked ? 0 : dash_dir_x;
     var dy = dash_blocked ? 0 : dash_dir_y;
 
-    // movimento por sub-steps: cada iteração move dx, dy (componentes ≤ 1)
     var i = 0;
     var hit_wall = false;
 
     while (i < dash_speed)
     {
-        var moved_this_step = false;
+        var moved = false;
 
-        // tentamos mover nas duas componentes (prioridade: manter direção desejada)
-        if (!place_meeting(x + dx, y + dy, obj_solid))
-        {
-            // espaço livre na diagonal composta (melhor caso)
-            x += dx;
-            y += dy;
-            moved_this_step = true;
+        // diagonal
+        if (!place_meeting(x + dx, y + dy, obj_solid)) {
+            x += dx; y += dy; moved = true;
         }
         else
         {
-            // caso diagonal bloqueada, tenta mover X sozinho
-            if (!place_meeting(x + dx, y, obj_solid))
-            {
-                x += dx;
-                moved_this_step = true;
+            // X
+            if (!place_meeting(x + dx, y, obj_solid)) {
+                x += dx; moved = true;
             }
-            // tenta mover Y sozinho
-            else if (!place_meeting(x, y + dy, obj_solid))
-            {
-                y += dy;
-                moved_this_step = true;
+            // Y
+            else if (!place_meeting(x, y + dy, obj_solid)) {
+                y += dy; moved = true;
             }
             else
             {
-                // ambas componentes bloqueadas -> bateu na parede
                 hit_wall = true;
-                // A2: Ao bater, tentamos um pequeno "slide" suave:
-                // tentamos mover uma pequena fração perpendicular (0.5) para dar leve escorregada
-                // primeiro tenta deslocamento perpendicular em +90 graus e -90 graus
-                var perp_ang = point_direction(0, 0, dx, dy) + 90;
-                var sx = lengthdir_x(0.5, perp_ang);
-                var sy = lengthdir_y(0.5, perp_ang);
-                if (!place_meeting(x + sx, y + sy, obj_solid))
+
+                var ang = point_direction(0,0,dx,dy) + 90;
+
+                repeat (2)
                 {
-                    x += sx; y += sy;
-                    moved_this_step = true;
-                }
-                else
-                {
-                    perp_ang = perp_ang - 180; // tenta a outra direção perpendicular
-                    sx = lengthdir_x(0.5, perp_ang);
-                    sy = lengthdir_y(0.5, perp_ang);
-                    if (!place_meeting(x + sx, y + sy, obj_solid))
-                    {
-                        x += sx; y += sy;
-                        moved_this_step = true;
+                    var sx = lengthdir_x(0.5, ang);
+                    var sy = lengthdir_y(0.5, ang);
+
+                    if (!place_meeting(x + sx, y + sy, obj_solid)) {
+                        x += sx; y += sy; moved = true; break;
                     }
+
+                    ang -= 180;
                 }
             }
         }
 
-        // se nada foi movido neste sub-step, não adianta continuar tentando
-        if (!moved_this_step)
-        {
-            // marca bloqueio e sai do loop para evitar clip/overshoot
+        if (!moved) {
             dash_blocked = true;
             break;
         }
 
-        i++;
+        i++; // ❗ só incrementa quando realmente moveu
     }
 
-    // se bateu em algum momento, mantém dash_blocked = true para impedir retrigger de movimento
     if (hit_wall) dash_blocked = true;
 
-    // animação do roll continua sempre
     sprite_index = spr_player_roll;
     image_speed = 1;
     image_xscale = last_dir * scale;
 
-    // decrementa timer e encerra dash quando acabar
     dash_timer--;
     if (dash_timer <= 0 || image_index >= image_number - 1)
     {
@@ -159,61 +128,55 @@ if (is_dashing)
         dash_blocked = false;
     }
 
-    // impede o restante do Step de rodar (proteção absoluta)
     exit;
 }
 
-
 // =========================================================
-// 3) MOVIMENTO NORMAL (executa apenas quando NÃO estiver atacando/nem dashando)
+// 3) MOVIMENTO NORMAL
 // =========================================================
-if (!is_attacking && !is_dashing)
+if (!is_attacking)
 {
     move_x = keyboard_check(ord("D")) - keyboard_check(ord("A"));
     move_y = keyboard_check(ord("S")) - keyboard_check(ord("W"));
 
-    if (move_x != 0 || move_y != 0)
-    {
-        var mlen2 = point_distance(0,0,move_x,move_y);
-        move_x /= mlen2;
-        move_y /= mlen2;
+    var moving = (move_x != 0 || move_y != 0);
+
+    if (moving) {
+        var l = point_distance(0,0,move_x,move_y);
+        move_x /= l;
+        move_y /= l;
     }
 
     h = move_x * move_speed;
     v = move_y * move_speed;
 
-    // facing / last_dir
-    if (move_x != 0 || move_y != 0)
+    // facing
+    if (moving)
     {
-        if (abs(move_x) > abs(move_y))
-        {
-            facing = (move_x > 0) ? "right" : "left";
-            last_dir = (move_x > 0) ? 1 : -1;
-        }
-        else
-        {
-            facing = (move_y > 0) ? "down" : "up";
+        if (abs(move_x) > abs(move_y)) {
+            facing = move_x > 0 ? "right" : "left";
+            last_dir = move_x > 0 ? 1 : -1;
+        } else {
+            facing = move_y > 0 ? "down" : "up";
         }
     }
 
-    // sprites de movimento / idle
-    if (move_x != 0 || move_y != 0)
+    // sprites
+    if (moving)
     {
         image_speed = 1;
-        switch (facing)
-        {
+        switch (facing) {
             case "right":
-            case "left":  sprite_index = spr_player_andando; break;
-            case "up":    sprite_index = spr_player_andando_cima; break;
-            case "down":  sprite_index = spr_player_andando_baixo; break;
+            case "left": sprite_index = spr_player_andando; break;
+            case "up":   sprite_index = spr_player_andando_cima; break;
+            case "down": sprite_index = spr_player_andando_baixo; break;
         }
     }
     else
     {
         image_speed = 0;
         image_index = 0;
-        switch (facing)
-        {
+        switch (facing) {
             case "right":
             case "left": sprite_index = spr_player; break;
             case "up":   sprite_index = spr_player_cima; break;
@@ -223,8 +186,8 @@ if (!is_attacking && !is_dashing)
 
     image_xscale = (facing == "left") ? -scale : scale;
 
-    // corrida (ajusta move_speed e recalcula h/v)
-    var running = keyboard_check(vk_shift) && (move_x != 0 || move_y != 0);
+    // corrida
+    var running = keyboard_check(vk_shift) && moving;
     if (running && stamina > 0)
     {
         move_speed = 2;
@@ -247,111 +210,102 @@ if (!is_dashing && !is_attacking && !(keyboard_check(vk_shift) && (move_x != 0 |
 
 
 // =========================================================
-// 5) ATAQUE (inicia apenas quando não dash/attacking)
+// 5) ATAQUE (inicio)
 // =========================================================
 if (!is_dashing && !is_attacking && stamina >= attack_stamina_cost)
+if (mouse_check_button_pressed(mb_left))
 {
-    if (mouse_check_button_pressed(mb_left))
+    is_attacking = true;
+    attack_timer = attack_time;
+    stamina_spend(attack_stamina_cost);
+
+    attack_facing = facing;
+
+    var hb = instance_create_layer(x, y, "Instances", obj_hitbox_player_attack);
+    hb.attack_dir = attack_facing;
+    hb.owner      = id;
+
+    switch (attack_facing)
     {
-        is_attacking = true;
-        attack_timer = attack_time;
-        stamina_spend(attack_stamina_cost);
-
-        attack_facing = facing;
-
-        var hb = instance_create_layer(x, y, "Instances", obj_hitbox_player_attack);
-        hb.attack_dir = attack_facing;
-        hb.owner = id;
-
-        switch (attack_facing)
-        {
-            case "up":    sprite_index = spr_player_atacando_cima;      break;
-            case "down":  sprite_index = spr_player_atacando_baixo;     break;
-            case "right": sprite_index = spr_player_atacando; image_xscale = scale;  break;
-            case "left":  sprite_index = spr_player_atacando; image_xscale = -scale; break;
-        }
-
-        image_speed = 1;
+        case "up":    sprite_index = spr_player_atacando_cima;  break;
+        case "down":  sprite_index = spr_player_atacando_baixo; break;
+        case "right": sprite_index = spr_player_atacando; image_xscale = scale;  break;
+        case "left":  sprite_index = spr_player_atacando; image_xscale = -scale; break;
     }
+
+    image_speed = 1;
 }
 
 
 // =========================================================
-// 6) LÓGICA DO ATAQUE (timer e reset de sprite)
+// 6) ATAQUE (execução)
 // =========================================================
 if (is_attacking)
 {
     attack_timer--;
-    h = 0;
-    v = 0;
+    h = 0;  v = 0;
 
     if (attack_timer <= 0)
     {
         is_attacking = false;
-        image_speed = 0;
-        switch (facing)
-        {
+        image_speed  = 0;
+
+        switch (facing) {
             case "right":
             case "left": sprite_index = spr_player; break;
-            case "up":    sprite_index = spr_player_cima; break;
-            case "down":  sprite_index = spr_player_baixo; break;
+            case "up":   sprite_index = spr_player_cima; break;
+            case "down": sprite_index = spr_player_baixo; break;
         }
     }
 }
 
 
 // =========================================================
-// 7) COLISÃO FINAL COM OBJ_SÓLIDO (movimento normal apenas)
-// - Movimento em passos de até 1px para evitar clip
+// 7) COLISÃO FINAL — paredes + inimigos
 // =========================================================
-if (!is_dashing)
+function move_normal_collision(nx, ny)
 {
-    // horizontal
-    var remaining_h = h;
-    var sign_h = sign(remaining_h);
-    while (abs(remaining_h) > 0.0001)
+    var rem, step, s;
+
+    // HORIZONTAL
+    rem = nx;
+    s   = sign(nx);
+    while (abs(rem) > 0.0001)
     {
-        var step_h = sign_h * min(1, abs(remaining_h));
-        if (!place_meeting(x + step_h, y, obj_solid))
+        step = s * min(1, abs(rem));
+        if (!place_meeting(x + step, y, obj_solid) &&
+            !place_meeting(x + step, y, obj_enemy))
         {
-            x += step_h;
-            remaining_h -= step_h;
+            x += step; rem -= step;
         }
-        else
-        {
-            remaining_h = 0;
-            break;
-        }
+        else break;
     }
 
-    // vertical
-    var remaining_v = v;
-    var sign_v = sign(remaining_v);
-    while (abs(remaining_v) > 0.0001)
+    // VERTICAL
+    rem = ny;
+    s   = sign(ny);
+    while (abs(rem) > 0.0001)
     {
-        var step_v = sign_v * min(1, abs(remaining_v));
-        if (!place_meeting(x, y + step_v, obj_solid))
+        step = s * min(1, abs(rem));
+        if (!place_meeting(x, y + step, obj_solid) &&
+            !place_meeting(x, y + step, obj_enemy))
         {
-            y += step_v;
-            remaining_v -= step_v;
+            y += step; rem -= step;
         }
-        else
-        {
-            remaining_v = 0;
-            break;
-        }
+        else break;
     }
 }
 
+if (!is_dashing) move_normal_collision(h, v);
+
 
 // =========================================================
-// 8) COLISÃO COM INIMIGO (empurrar player para fora)
+// 8) ANTI-STUCK COM INIMIGO
 // =========================================================
 if (!is_dashing)
 {
     var e = instance_place(x, y, obj_enemy);
-    if (e != noone)
-    {
+    if (e != noone) {
         var ang = point_direction(e.x, e.y, x, y);
         x += lengthdir_x(4, ang);
         y += lengthdir_y(4, ang);
@@ -360,25 +314,77 @@ if (!is_dashing)
 
 
 // =========================================================
-// 9) ANTI-STUCK (varredura curta se ainda estiver dentro)
+// 9) ANTI-STUCK EM PAREDE (SUBSTITUIÇÃO MAIS SEGURO)
 // =========================================================
+// Só tenta se realmente estivermos dentro do solid.
+// Usa busca por "raios", priorizando correções ortogonais para evitar teleportes diagonais.
 if (place_meeting(x, y, obj_solid))
 {
     var found = false;
     var maxr = 6;
-    for (var r = 1; r <= maxr && !found; r++)
+
+    // primeiro tenta correções ortogonais pequenas: (±1,0) e (0,±1)
+    for (var dist = 1; dist <= maxr && !found; dist++)
     {
-        for (var ox = -r; ox <= r && !found; ox++)
+        // checa passos ortogonais primeiro (horizontal/vertical)
+        var ortho = [
+            [dist, 0],
+            [-dist, 0],
+            [0, dist],
+            [0, -dist]
+        ];
+
+        var diagStep = dist; // para usar depois, se ortho falhar
+
+        // testar ortogonais
+        for (var oi = 0; oi < array_length(ortho) && !found; oi++)
         {
-            for (var oy = -r; oy <= r && !found; oy++)
+            var tox = ortho[oi][0];
+            var toy = ortho[oi][1];
+            if (!place_meeting(x + tox, y + toy, obj_solid))
             {
-                if (!place_meeting(x + ox, y + oy, obj_solid))
-                {
-                    x += ox;
-                    y += oy;
-                    found = true;
-                }
+                x += tox;
+                y += toy;
+                found = true;
+                break;
+            }
+        }
+
+        if (found) break;
+
+        // se nenhuma ortogonal foi livre, só então verificar a "borda" em volta (diagonais)
+        // varre a circunferência manhattan de raio dist
+        for (var ox = -dist; ox <= dist && !found; ox++)
+        {
+            var oy_top = -dist;
+            var oy_bot = dist;
+
+            if (!place_meeting(x + ox, y + oy_top, obj_solid))
+            {
+                x += ox; y += oy_top; found = true; break;
+            }
+            if (!place_meeting(x + ox, y + oy_bot, obj_solid))
+            {
+                x += ox; y += oy_bot; found = true; break;
+            }
+        }
+
+        for (var oy = -dist+1; oy <= dist-1 && !found; oy++)
+        {
+            var ox_left = -dist;
+            var ox_right = dist;
+
+            if (!place_meeting(x + ox_left, y + oy, obj_solid))
+            {
+                x += ox_left; y += oy; found = true; break;
+            }
+            if (!place_meeting(x + ox_right, y + oy, obj_solid))
+            {
+                x += ox_right; y += oy; found = true; break;
             }
         }
     }
+
+    // Se não achou nenhuma posição (muito raro), não faz nada — evita teleporte perigoso.
 }
+
