@@ -19,7 +19,7 @@
   "height":16,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"405e76cb-fc26-4d71-be31-58c0c111633b","blendMode":0,"displayName":"default","isLocked":false,"name":"405e76cb-fc26-4d71-be31-58c0c111633b","opacity":0.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"405e76cb-fc26-4d71-be31-58c0c111633b","blendMode":0,"displayName":"default","isLocked":false,"name":"405e76cb-fc26-4d71-be31-58c0c111633b","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"spr_attack",
   "nineSlice":null,

@@ -438,4 +438,6 @@ if (place_meeting(x, y, obj_solid))
 
     // Se não achou nenhuma posição (muito raro), não faz nada — evita teleporte perigoso.
 }
-
+if (hp <= 0){
+	instance_destroy()
+}

@@ -1,6 +1,6 @@
 {
   "$GMSprite":"v2",
-  "%Name":"spr_enemy_atacando_baixo",
+  "%Name":"spr_enemy_attack_baixo",
   "bboxMode":0,
   "bbox_bottom":47,
   "bbox_left":0,
@@ -26,7 +26,7 @@
   "layers":[
     {"$GMImageLayer":"","%Name":"92f41d9d-7051-429c-b92c-042118d12f47","blendMode":0,"displayName":"default","isLocked":false,"name":"92f41d9d-7051-429c-b92c-042118d12f47","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
-  "name":"spr_enemy_atacando_baixo",
+  "name":"spr_enemy_attack_baixo",
   "nineSlice":null,
   "origin":9,
   "parent":{
@@ -38,7 +38,7 @@
   "resourceVersion":"2.0",
   "sequence":{
     "$GMSequence":"v1",
-    "%Name":"spr_enemy_atacando_baixo",
+    "%Name":"spr_enemy_attack_baixo",
     "autoRecord":true,
     "backdropHeight":768,
     "backdropImageOpacity":0.5,
@@ -62,7 +62,7 @@
       "resourceType":"KeyframeStore<MomentsEventKeyframe>",
       "resourceVersion":"2.0",
     },
-    "name":"spr_enemy_atacando_baixo",
+    "name":"spr_enemy_attack_baixo",
     "playback":1,
     "playbackSpeed":9.0,
     "playbackSpeedType":0,
@@ -76,22 +76,22 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"6c6ba256-e9b3-48f4-a18b-1e82787ab86e","path":"sprites/spr_enemy_atacando_baixo/spr_enemy_atacando_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"6c6ba256-e9b3-48f4-a18b-1e82787ab86e","path":"sprites/spr_enemy_attack_baixo/spr_enemy_attack_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
               },"Disabled":false,"id":"ddb394cb-fd8d-4e1b-9842-e46900ab61eb","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"13f2c7d5-498a-4942-995f-f601cad9b407","path":"sprites/spr_enemy_atacando_baixo/spr_enemy_atacando_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"13f2c7d5-498a-4942-995f-f601cad9b407","path":"sprites/spr_enemy_attack_baixo/spr_enemy_attack_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
               },"Disabled":false,"id":"573463ab-0c30-4db1-b6e4-d3e441c7f9d1","IsCreationKey":false,"Key":1.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"c3ec06d2-0865-451b-9f40-27b31ec194fc","path":"sprites/spr_enemy_atacando_baixo/spr_enemy_atacando_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"c3ec06d2-0865-451b-9f40-27b31ec194fc","path":"sprites/spr_enemy_attack_baixo/spr_enemy_attack_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
               },"Disabled":false,"id":"c9579d93-c5ce-4cde-b3d0-1b794d712e04","IsCreationKey":false,"Key":2.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"3660cfa6-ace6-41b8-8598-0a481f5d7f2c","path":"sprites/spr_enemy_atacando_baixo/spr_enemy_atacando_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"3660cfa6-ace6-41b8-8598-0a481f5d7f2c","path":"sprites/spr_enemy_attack_baixo/spr_enemy_attack_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
               },"Disabled":false,"id":"983ae27b-cad5-4c4b-a21b-08f3e03798a4","IsCreationKey":false,"Key":3.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"c0978260-8b43-43db-8d9f-7a3e9eb84e78","path":"sprites/spr_enemy_atacando_baixo/spr_enemy_atacando_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"c0978260-8b43-43db-8d9f-7a3e9eb84e78","path":"sprites/spr_enemy_attack_baixo/spr_enemy_attack_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
               },"Disabled":false,"id":"47fb33b4-f81e-4d10-864b-47abf938bd23","IsCreationKey":false,"Key":4.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"8a9bcac8-d04f-4842-bf85-56d73768c329","path":"sprites/spr_enemy_atacando_baixo/spr_enemy_atacando_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"8a9bcac8-d04f-4842-bf85-56d73768c329","path":"sprites/spr_enemy_attack_baixo/spr_enemy_attack_baixo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
               },"Disabled":false,"id":"f1793e12-81c3-496b-a097-ca3d0afe4e4b","IsCreationKey":false,"Key":5.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],

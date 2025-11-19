@@ -16,7 +16,7 @@ image_yscale = 0.5;
 state_patrol = 0;   // anda de um lado para o outro
 state_chase  = 1;   // persegue o player
 state_attack = 2;   // ataque
-state_recover = 3;  // pausa depois do ataque
+state_recover = 5;  // pausa depois do ataque
 
 state = state_patrol;
 
@@ -24,8 +24,8 @@ state = state_patrol;
 // ============================================
 // VELOCIDADES
 // ============================================
-spd_patrol = 1;
-spd_chase  = 1.4;  // inimigo mais lento que o player
+spd_patrol = 0.5;
+spd_chase  = 0.7;  // inimigo mais lento que o player
 
 
 // ============================================
@@ -33,7 +33,8 @@ spd_chase  = 1.4;  // inimigo mais lento que o player
 // ============================================
 alert_range = 140;   // distância para começar perseguição
 attack_range = 24;   // distância para atacar
-
+is_attacking = false
+attack_time = 30
 
 // ============================================
 // TIMERS
@@ -61,3 +62,5 @@ player_obj = obj_player;
 // MOVIMENTO
 hsp = 0;
 vsp = 0;
+
+
